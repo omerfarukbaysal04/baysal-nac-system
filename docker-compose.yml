@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: nac_postgres
+    env_file:
+      - .env
+    volumes:
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - radius-net
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:8-alpine
+    container_name: nac_redis
+    networks:
+      - radius-net
+    ports:
+      - "6379:6379"
+
+  api:
+    image: python:3.13-slim
+    container_name: nac_api
+    working_dir: /app
+    volumes:
+      - ./api:/app
+    command: sh -c "pip install -r requirements.txt && python app/main.py"
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    networks:
+      - radius-net
+
+networks:
+  radius-net:
