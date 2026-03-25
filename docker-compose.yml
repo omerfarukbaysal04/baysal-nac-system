@@ -22,12 +22,8 @@ services:
       - "6379:6379"
 
   api:
-    image: python:3.13-slim
+    build: ./api
     container_name: nac_api
-    working_dir: /app
-    volumes:
-      - ./api:/app
-    command: sh -c "pip install -r requirements.txt && python app/main.py"
     env_file:
       - .env
     ports:
