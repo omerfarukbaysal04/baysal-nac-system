@@ -1,5 +1,6 @@
 fastapi
-uvicorn
+uvicorn[standard]
 asyncpg
-redis
+redis[asyncio]
 bcrypt
+pydantic
