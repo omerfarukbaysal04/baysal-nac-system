@@ -1,17 +1,15 @@
 import bcrypt
 from fastapi import APIRouter, HTTPException
 from app import db
-from app.models import AuthRequest, AuthResponse
+from app.models import AuthRequest
 
 router = APIRouter()
 
-
-@router.post("/auth", response_model=AuthResponse)
+@router.post("/auth")
 async def authenticate(request: AuthRequest):
     """
     FreeRADIUS rlm_rest bu endpoint'e POST atar.
     Kullanici adi ve sifre gelir, bcrypt ile dogrulama yapilir.
-    Sonuc olarak Access-Accept veya Access-Reject doner.
     """
 
     # 1. Kullaniciyi veritabanindan cek
@@ -24,12 +22,12 @@ async def authenticate(request: AuthRequest):
     # 2. Kullanici bulunamadiysa redis'e basarisiz denemeyi kaydet ve reject don
     if user is None:
         await _increment_fail_count(request.username)
-        return AuthResponse(result="Access-Reject", username=request.username)
+        raise HTTPException(status_code=401, detail="User not found")
 
     # 3. Rate-limit kontrolu: ayni kullanici cok fazla basarisiz deneme yaptiysa engelle
     fail_count = await _get_fail_count(request.username)
     if fail_count >= 5:
-        return AuthResponse(result="Access-Reject", username=request.username)
+        raise HTTPException(status_code=429, detail="Too many failed attempts")
 
     # 4. Sifre kontrolu: gelen duz metin sifre, veritabanindaki bcrypt hash ile karsilastirilir
     password_matches = bcrypt.checkpw(
@@ -39,15 +37,11 @@ async def authenticate(request: AuthRequest):
 
     if not password_matches:
         await _increment_fail_count(request.username)
-        return AuthResponse(result="Access-Reject", username=request.username)
+        raise HTTPException(status_code=401, detail="Invalid password")
 
-    # 5. Basarili giris: sayaci sifirla, Accept don
+    # 5. Basarili giris: sayaci sifirla, Accept don (HTTP 200)
     await _reset_fail_count(request.username)
-    return AuthResponse(
-        result="Access-Accept",
-        username=user["username"],
-        group=user["groupname"]
-    )
+    return {"status": "success"}
 
 
 # --- Yardimci fonksiyonlar (Redis rate-limiting) ---
@@ -70,4 +64,4 @@ async def _increment_fail_count(username: str):
 
 async def _reset_fail_count(username: str):
     key = RATE_LIMIT_KEY.format(username=username)
-    await db.redis.delete(key)  
+    await db.redis.delete(key)

@@ -1,12 +1,12 @@
 from fastapi import APIRouter
 from datetime import datetime, timezone
 from app import db
-from app.models import AccountingRequest, AccountingResponse
+from app.models import AccountingRequest
 
 router = APIRouter()
 
 
-@router.post("/accounting", response_model=AccountingResponse)
+@router.post("/accounting")
 async def accounting(request: AccountingRequest):
     """
     FreeRADIUS rlm_rest her Accounting-Request paketinde bu endpoint'e POST atar.
@@ -23,7 +23,7 @@ async def accounting(request: AccountingRequest):
     elif request.status_type == "Stop":
         await _handle_stop(request)
 
-    return AccountingResponse(result="ok")
+    return {"status": "ok"}
 
 
 # --- Yardimci fonksiyonlar ---
