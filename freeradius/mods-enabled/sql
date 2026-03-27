@@ -16,10 +16,22 @@ sql {
         idle_timeout = 60
     }
 
-    # Tablo ve sorgu tanimlari — FreeRADIUS default sorgu sablonlarini kullanir.
     # read_clients = yes dersek NAS bilgilerini clients.conf yerine nas tablosundan okur.
     read_clients = yes
     client_table = "nas"
+
+    group_attribute = "SQL-Group"
+
+    #tablo referansları
+    acct_table1 = "radacct"
+    acct_table2 = "radacct"
+    postauth_table = "radpostauth"
+    authcheck_table = "radcheck"
+    authreply_table = "radreply"
+    groupcheck_table = "radgroupcheck"
+    groupreply_table = "radgroupreply"
+    usergroup_table = "radusergroup"
+    # ---------------------------------------------------
 
     # Accounting sorgulari icin FreeRADIUS'un default postgresql sablonlarini kullan.
     # Bu dosyalar freeradius image'inin icinde mevcut gelir.

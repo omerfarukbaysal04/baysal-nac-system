@@ -99,14 +99,12 @@ CREATE TABLE
 IF NOT EXISTS nas
 (
     id          SERIAL PRIMARY KEY,
-    nasname     VARCHAR
-(128) NOT NULL,
-    shortname   VARCHAR
-(32)  DEFAULT NULL,
-    secret      VARCHAR
-(60)  NOT NULL DEFAULT 'testing123',
-    description VARCHAR
-(200) DEFAULT NULL
+    nasname     VARCHAR(128) NOT NULL,
+    shortname   VARCHAR(32)  DEFAULT NULL,
+    type        VARCHAR(30)  DEFAULT 'other', -- FreeRADIUS rlm_sql bunu bekliyor
+    secret      VARCHAR(60)  NOT NULL DEFAULT 'testing123',
+    server      VARCHAR(64)  DEFAULT NULL,    -- FreeRADIUS rlm_sql bunu bekliyor
+    description VARCHAR(200) DEFAULT NULL
 );
 
 -- Test NAS cihazi
