@@ -66,9 +66,9 @@ services:
       - "1812:1812/udp"
       - "1813:1813/udp"
     volumes:
-      - ./freeradius/mods-enabled:/etc/freeradius/3.0/mods-enabled
-      - ./freeradius/sites-enabled:/etc/freeradius/3.0/sites-enabled
-      - ./freeradius/clients.conf:/etc/freeradius/3.0/clients.conf
+      - ./freeradius/mods-enabled:/etc/freeradius/mods-enabled
+      - ./freeradius/sites-enabled:/etc/freeradius/sites-enabled
+      - ./freeradius/clients.conf:/etc/freeradius/clients.conf
     networks:
       - radius-net
     depends_on:
