@@ -1,0 +1,27 @@
+sql {
+    driver      = "rlm_sql_postgresql"
+    dialect     = "postgresql"
+
+    server      = "postgres"
+    port        = 5432
+    login       = "radius"
+    password    = "secret"
+    radius_db   = "radius"
+
+    # Baglanti havuzu ayarlari
+    pool {
+        start       = 5
+        min         = 4
+        max         = 10
+        idle_timeout = 60
+    }
+
+    # Tablo ve sorgu tanimlari — FreeRADIUS default sorgu sablonlarini kullanir.
+    # read_clients = yes dersek NAS bilgilerini clients.conf yerine nas tablosundan okur.
+    read_clients = yes
+    client_table = "nas"
+
+    # Accounting sorgulari icin FreeRADIUS'un default postgresql sablonlarini kullan.
+    # Bu dosyalar freeradius image'inin icinde mevcut gelir.
+    $INCLUDE ${modconfdir}/${.:name}/main/postgresql/queries.conf
+}
