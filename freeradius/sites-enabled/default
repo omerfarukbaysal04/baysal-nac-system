@@ -31,7 +31,6 @@ server default {
     }
     accounting {
         rest
-        sql
     }
 
     post-auth {
