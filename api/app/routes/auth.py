@@ -21,11 +21,11 @@ async def authenticate(request: AuthRequest):
 
     if user is None:
         await _increment_fail_count(request.username)
-        return {"control:Auth-Type": "Reject"}
+        return {}
 
     fail_count = await _get_fail_count(request.username)
     if fail_count >= 5:
-        return {"control:Auth-Type": "Reject"}
+        return {}
 
     password_matches = bcrypt.checkpw(
         request.password.encode("utf-8"),
@@ -34,12 +34,11 @@ async def authenticate(request: AuthRequest):
 
     if not password_matches:
         await _increment_fail_count(request.username)
-        return {"control:Auth-Type": "Reject"}
+        return {}
 
     await _reset_fail_count(request.username)
     vlan = VLAN_MAP.get(user["groupname"], "30")
     return {
-        "control:Auth-Type": "Accept",
         "reply:Tunnel-Type": "13",
         "reply:Tunnel-Medium-Type": "6",
         "reply:Tunnel-Private-Group-Id": vlan

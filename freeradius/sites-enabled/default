@@ -12,57 +12,32 @@ server default {
         port        = 1813
     }
 
-    # ==========================================================
-    # AUTHORIZE
-    # Kullanici kim? Hangi modul sifresini dogrulayacak?
-    # ==========================================================
     authorize {
-        # 1. Istegi logla (debug icin)
         filter_username
-
-        # 2. FastAPI'ye sor: bu kullanici hangi gruba ait, hangi VLAN'a gitmeli?
         rest
-
-        # 3. Eger PAP kullaniliyorsa Auth-Type'i PAP olarak isaretliyoruz
-        #    bcrypt dogrulamasi FastAPI/rest modulu uzerinden yapilacak
         pap
     }
 
-    # ==========================================================
-    # AUTHENTICATE
-    # Sifreyi kim dogruluyor?
-    # ==========================================================
-    authenticate {
-    Auth-Type Rest {
-        rest
-        if (updated) {
-            ok
+   authenticate {
+        Auth-Type Rest {
+            rest
+            if (updated) {
+                ok
+            }
+            else {
+                reject
+            }
         }
     }
-}
-
-    # ==========================================================
-    # ACCOUNTING
-    # Oturum verisini kaydet
-    # ==========================================================
     accounting {
-        # Accounting paketini FastAPI /accounting endpoint'ine ilet
         rest
-
-        # Ayni zamanda PostgreSQL radacct tablosuna da yaz (rlm_sql ile)
         sql
     }
 
-    # ==========================================================
-    # POST-AUTH
-    # Auth basarili olduktan sonra calis
-    # ==========================================================
     post-auth {
-        # Basarili auth sonrasi VLAN attribute'lerini ekle
         rest
 
         Post-Auth-Type REJECT {
-            # Reddedilen istekleri logla
             attr_filter.access_reject
         }
     }
