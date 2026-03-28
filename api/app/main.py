@@ -1,7 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from app import db
-from app.routes import auth, authorize, accounting
 from app.routes.auth import router as auth_router
 from app.routes.authorize import router as authorize_router
 from app.routes.accounting import router as accounting_router

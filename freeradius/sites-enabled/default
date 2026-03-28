@@ -33,16 +33,13 @@ server default {
     # Sifreyi kim dogruluyor?
     # ==========================================================
     authenticate {
-        # Auth-Type Rest: sifre dogrulamasi rlm_rest uzerinden FastAPI'ye gidiyor
-        Auth-Type Rest {
-            rest
-        }
-
-        # Auth-Type PAP: fallback olarak PAP de tanimli (test senaryolari icin)
-        Auth-Type PAP {
-            pap
+    Auth-Type Rest {
+        rest
+        if (updated) {
+            ok
         }
     }
+}
 
     # ==========================================================
     # ACCOUNTING
